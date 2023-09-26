@@ -1,11 +1,12 @@
-import * as React from "react";
+import React from "react";
 import Svg, { G, Path, Defs, ClipPath } from "react-native-svg";
+
 export const NotificationIcon = (props) => (
   <Svg
     xmlns="http://www.w3.org/2000/svg"
     width={24}
     height={24}
-    fill="none"
+    fill="#4775f2"
     {...props}
   >
     <G fill="#333" clipPath="url(#a)">

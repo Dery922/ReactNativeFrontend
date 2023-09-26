@@ -1,16 +1,33 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React from "react";
 import styled from "styled-components";
 
 const Logo = (props) => (
   <Container>
-    <Image />
-    <Text></Text>
+    <Image source={props.image} resizeMode="contain" />
+    <Text>{props.text}</Text>
   </Container>
 );
 
-const Container = styled.View``;
-const Image = styled.Image``;
-const Text = styled.Text``;
+const Container = styled.View`
+  flex-direction: row;
+  background: white;
+  height: 60px;
+  padding: 12px 16px 12px;
+  border-radius: 10px;
+  box-shadow: 0 15px 10px rgba(0.2, 0.2, 0, 0.25);
+  align-items: center;
+  margin: 0 8px;
+`;
+
+const Image = styled.Image`
+  width: 36px;
+  height: 36px;
+`;
+const Text = styled.Text`
+  font-weight: 600;
+  font-size: 17px;
+  margin-left: 8px;
+`;
 
 export default Logo;
