@@ -8,11 +8,12 @@ class Avatar extends React.Component {
   };
 
   componentDidMount() {
-    fetch("https://uinames.com/api/")
+    fetch("https://uifaces.co/api")
       .then((response) => response.json())
       .then((response) => {
+        console.log(response);
         this.setState({
-          photo: response.photo,
+          photo: response.breeds,
         });
       });
   }
