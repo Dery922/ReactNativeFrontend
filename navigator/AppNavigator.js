@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "../screens/HomeScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import SectionScreen from "../screens/SectionScreen";
+import TabNavigator from "./TabNavigator";
 
 const Stack = createNativeStackNavigator();
 
@@ -13,12 +14,12 @@ function AppNavigator() {
         <Stack.Screen
           name="Home"
           options={{ headerShown: false }}
-          component={HomeScreen}
-          header="null"
+          component={TabNavigator}
         />
         <Stack.Screen
-          name="Section"
+          name="home"
           options={{ headerShown: false }}
+          headerShown={false}
           component={SectionScreen}
         />
       </Stack.Navigator>

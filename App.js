@@ -7,6 +7,16 @@ import { Provider } from "react-redux";
 import HomeScreen from "./screens/HomeScreen";
 import AppNavigator from "./navigator/AppNavigator";
 
+// import { ApolloClient, InMemoryCache } from "apollo-boost";
+import { ApolloProvider } from "react-apollo";
+import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
+
+const client = new ApolloClient({
+  link: new HttpLink({
+    uri: "your_graphql_endpoint_here",
+  }),
+  cache: new InMemoryCache(),
+});
 const initialState = {
   action: "",
 };
@@ -25,9 +35,11 @@ const reducer = (state = initialState, action) => {
 const store = configureStore({ reducer: reducer });
 
 const App = () => (
-  <Provider store={store}>
-    <AppNavigator />
-  </Provider>
+  <ApolloProvider client={client}>
+    <Provider store={store}>
+      <AppNavigator />
+    </Provider>
+  </ApolloProvider>
 );
 
 export default App;

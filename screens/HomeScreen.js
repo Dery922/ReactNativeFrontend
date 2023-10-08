@@ -1,10 +1,9 @@
 import React from "react";
-// import { StatusBar } from "expo-status-bar";
+
 import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  StatusBar,
   Animated,
   Easing,
   Text,
@@ -21,6 +20,8 @@ import Menu from "../components/Menu";
 
 import { connect } from "react-redux";
 import Avatar from "../components/Avatar";
+import { ApolloClient } from "apollo-boost";
+import gql from "graphql-tag";
 
 function mapStateToProps(state) {
   return { action: state.action };
@@ -44,10 +45,6 @@ class HomeScreen extends React.Component {
     scale: new Animated.Value(1),
     opacity: new Animated.Value(1),
   };
-
-  componentDidMount() {
-    StatusBar.setBarStyle("dark-content", true);
-  }
 
   componentDidUpdate() {
     this.toggleMenu();
@@ -133,7 +130,9 @@ class HomeScreen extends React.Component {
                   <TouchableOpacity
                     key={index}
                     onPress={() => {
-                      this.props.navigation.navigate("Section");
+                      this.props.navigation.navigate("home", {
+                        section: card,
+                      });
                     }}
                   >
                     <Card
@@ -186,7 +185,8 @@ const Subtitle = styled.Text`
 const Container = styled.View`
   flex: 1;
   background-color: #f0f3f5;
-  border-radius: 10px;
+  border-radius-top-left: 10px;
+  border-radius-top-right: 10px;
 `;
 
 const AnimatedContainer = Animated.createAnimatedComponent(Container);
