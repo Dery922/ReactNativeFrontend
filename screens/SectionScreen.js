@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { TouchableOpacity, StatusBar } from "react-native";
+import { TouchableOpacity, StatusBar, Linking } from "react-native";
+import { WebView } from "react-native-webview";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 class SectionScreen extends React.Component {
@@ -20,7 +21,7 @@ class SectionScreen extends React.Component {
       <Container>
         <StatusBar hidden />
         <Cover>
-          <Image source={section.image} />
+          <Image source={{ uri: section.image.url }} />
           <Wrapper>
             <Logo source={section.logo} />
             <Subtitle>{section.subtitle}</Subtitle>
@@ -43,12 +44,55 @@ class SectionScreen extends React.Component {
             />
           </CloseView>
         </TouchableOpacity>
+        <Content>
+          <WebView
+            source={{ html: section.content + htmlStyles }}
+            scalesPageToFit={false}
+            scrollEnabled={false}
+            ref="Webview"
+            onNavigationStateChange={(event) => {
+              Linking.openURL(event.url);
+
+              // if (event.url != "about:blank") {
+              //   this.ref.webview.stopLoading();
+              //   Linking.openURL(event.url);
+              // }
+            }}
+          />
+        </Content>
       </Container>
     );
   }
 }
 
 export default SectionScreen;
+
+const htmlContent = `
+  <h2>This is the title</h2>
+  <p>This is a <strong><a href="https://movies7.to/home">link</a></strong></p>
+  <img src"https://cl.ly/c0b07504bfec/download/background4.jpg"/>
+`;
+
+const htmlStyles = `
+  <style>
+    *{
+      font-family: - apple-system,Reboto;
+      margin:0;
+      padding:0;
+    }
+
+    img{
+      width:100%;
+      border-radius:10px;
+      margin-top:20px;
+    }
+  </style>
+`;
+
+const Content = styled.View`
+  height: 100%;
+  padding: 20px;
+`;
 
 const Container = styled.View`
   flex: 1;

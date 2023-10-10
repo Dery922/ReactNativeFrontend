@@ -4,6 +4,7 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
+  StatusBar,
   Animated,
   Easing,
   Text,
@@ -22,6 +23,40 @@ import { connect } from "react-redux";
 import Avatar from "../components/Avatar";
 import { ApolloClient } from "apollo-boost";
 import gql from "graphql-tag";
+import { Query } from "react-apollo";
+
+const CardsQuery = gql`
+  {
+    cardsCollection {
+      items {
+        title
+        subtitle
+        caption
+        image {
+          title
+          description
+          contentType
+          fileName
+          size
+          url
+          width
+          height
+        }
+        logo {
+          title
+          description
+          contentType
+          fileName
+          size
+          url
+          width
+          height
+        }
+        content
+      }
+    }
+  }
+`;
 
 function mapStateToProps(state) {
   return { action: state.action };
@@ -105,44 +140,55 @@ class HomeScreen extends React.Component {
                 />
               </TitleBar>
               <ScrollView
-                showsHorizontalScrollIndicator={false}
-                horizontal={true}
                 style={{
                   flexDirection: "row",
                   padding: 20,
                   paddingLeft: 12,
                   paddingTop: 30,
                 }}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
               >
                 {logos.map((logo, index) => (
                   <Logo key={index} image={logo.image} text={logo.text} />
                 ))}
               </ScrollView>
 
-              <Subtitle>Continue Leaning</Subtitle>
+              <Subtitle>{"Continue Learning".toUpperCase()}</Subtitle>
 
               <ScrollView
                 horizontal={true}
                 style={{ paddingBottom: 30 }}
                 showsHorizontalScrollIndicator={false}
               >
-                {cards.map((card, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => {
-                      this.props.navigation.navigate("home", {
-                        section: card,
-                      });
-                    }}
-                  >
-                    <Card
-                      title={card.title}
-                      subtitle={card.subtitle}
-                      caption={card.caption}
-                      image={card.image}
-                    />
-                  </TouchableOpacity>
-                ))}
+                <Query query={CardsQuery}>
+                  {({ loading, error, data }) => {
+                    if (loading) return <Message>Loading.....</Message>;
+                    if (error) return <Message>Error....</Message>;
+                    return (
+                      <CardsContainer>
+                        {data.cardsCollection.items.map((card, index) => (
+                          <TouchableOpacity
+                            key={index}
+                            onPress={() => {
+                              this.props.navigation.navigate("home", {
+                                section: card,
+                              });
+                            }}
+                          >
+                            <Card
+                              title={card.title}
+                              subtitle={card.subtitle}
+                              caption={card.caption}
+                              image={{ uri: card.image.url }}
+                              content={card.content}
+                            />
+                          </TouchableOpacity>
+                        ))}
+                      </CardsContainer>
+                    );
+                  }}
+                </Query>
               </ScrollView>
               <Subtitle>Popular Courses</Subtitle>
               {courses.map((course, index) => (
@@ -167,6 +213,20 @@ class HomeScreen extends React.Component {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
+
+const CoursesConatainer = styled.View``;
+
+const Message = styled.Text`
+  margin: 20px;
+  color: #b8bece;
+  font-size: 15px;
+  font-weight: 500;
+`;
+
+const CardsContainer = styled.View`
+  flex-direction: row;
+  padding-left: 10px;
+`;
 
 const RootView = styled.View`
   background: black;

@@ -13,7 +13,11 @@ import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 
 const client = new ApolloClient({
   link: new HttpLink({
-    uri: "your_graphql_endpoint_here",
+    uri: "https://graphql.contentful.com/content/v1/spaces/z7agl3sey1zb/",
+    credentials: "same-origin",
+    headers: {
+      Authorization: `Bearer 0O0XuVfTwFGfvRywj-ahkaMPHSn6fEOz5k_TDZxjBdM`,
+    },
   }),
   cache: new InMemoryCache(),
 });

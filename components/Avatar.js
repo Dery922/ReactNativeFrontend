@@ -7,19 +7,19 @@ class Avatar extends React.Component {
     photo: "",
   };
 
-  componentDidMount() {
-    fetch("https://uifaces.co/api")
-      .then((response) => response.json())
-      .then((response) => {
-        console.log(response);
-        this.setState({
-          photo: response.breeds,
-        });
-      });
-  }
+  // componentDidMount() {
+  //   fetch("https://uifaces.co/api")
+  //     .then((response) => response.json())
+  //     .then((response) => {
+  //       console.log(response);
+  //       this.setState({
+  //         photo: response.breeds,
+  //       });
+  //     });
+  // }
 
   render() {
-    return <Image source={{ uri: this.state.photo }} />;
+    return <Image />;
   }
 }
 
