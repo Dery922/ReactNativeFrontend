@@ -1,8 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { TouchableOpacity, StatusBar, Linking } from "react-native";
+import { TouchableOpacity, StatusBar, Linking, ScrollView } from "react-native";
 import { WebView } from "react-native-webview";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Markdown from "react-native-showdown";
 
 class SectionScreen extends React.Component {
   componentDidMount() {
@@ -18,34 +19,35 @@ class SectionScreen extends React.Component {
     const section = route.params.section;
 
     return (
-      <Container>
-        <StatusBar hidden />
-        <Cover>
-          <Image source={{ uri: section.image.url }} />
-          <Wrapper>
-            <Logo source={section.logo} />
-            <Subtitle>{section.subtitle}</Subtitle>
-          </Wrapper>
-          <Title>{section.title} </Title>
-          <Caption>{section.caption}</Caption>
-        </Cover>
-        <TouchableOpacity
-          onPress={() => {
-            this.props.navigation.goBack();
-          }}
-          style={{ position: "absolute", top: 20, right: 20 }}
-        >
-          <CloseView>
-            <Ionicons
-              name="close"
-              size={34}
-              color="blue"
-              style={{ marginTop: -2 }}
-            />
-          </CloseView>
-        </TouchableOpacity>
-        <Content>
-          <WebView
+      <ScrollView>
+        <Container>
+          <StatusBar hidden />
+          <Cover>
+            <Image source={{ uri: section.image.url }} />
+            <Wrapper>
+              <Logo source={section.logo} />
+              <Subtitle>{section.subtitle}</Subtitle>
+            </Wrapper>
+            <Title>{section.title} </Title>
+            <Caption>{section.caption}</Caption>
+          </Cover>
+          <TouchableOpacity
+            onPress={() => {
+              this.props.navigation.goBack();
+            }}
+            style={{ position: "absolute", top: 20, right: 20 }}
+          >
+            <CloseView>
+              <Ionicons
+                name="close"
+                size={34}
+                color="blue"
+                style={{ marginTop: -2 }}
+              />
+            </CloseView>
+          </TouchableOpacity>
+          <Content>
+            {/* <WebView
             source={{ html: section.content + htmlStyles }}
             scalesPageToFit={false}
             scrollEnabled={false}
@@ -53,14 +55,21 @@ class SectionScreen extends React.Component {
             onNavigationStateChange={(event) => {
               Linking.openURL(event.url);
 
-              // if (event.url != "about:blank") {
-              //   this.ref.webview.stopLoading();
-              //   Linking.openURL(event.url);
-              // }
+              if (event.url != "about:blank") {
+                this.ref.webview.stopLoading();
+                Linking.openURL(event.url);
+              }
             }}
-          />
-        </Content>
-      </Container>
+          /> */}
+            <Markdown
+              body={section.content}
+              pureCSS={htmlStyles}
+              scalesPageToFit={false}
+              scrollEnabled={false}
+            />
+          </Content>
+        </Container>
+      </ScrollView>
     );
   }
 }
@@ -74,11 +83,15 @@ const htmlContent = `
 `;
 
 const htmlStyles = `
-  <style>
+
     *{
       font-family: - apple-system,Reboto;
       margin:0;
       padding:0;
+      font-size:17px;
+      font-weight:normal;
+      color:#3c4560;
+      line-height:24px;
     }
 
     img{
@@ -86,12 +99,12 @@ const htmlStyles = `
       border-radius:10px;
       margin-top:20px;
     }
-  </style>
+
 `;
 
 const Content = styled.View`
-  height: 100%;
-  padding: 20px;
+  height: 1000px;
+  padding: 12px;
 `;
 
 const Container = styled.View`

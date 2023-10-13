@@ -14,17 +14,7 @@ function TabNavigator() {
   return (
     <Tab.Navigator>
       <Tab.Screen
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" color={color} size={34} />
-          ),
-        }}
-        name="Home"
-        component={HomeScreen}
-      />
-      <Tab.Screen
-        name="Course"
+        name="Projects"
         options={{
           headerShown: false,
           tabBarBadge: 3,
@@ -35,7 +25,18 @@ function TabNavigator() {
         component={ProjectScreen}
       />
       <Tab.Screen
-        name="Projects"
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" color={color} size={34} />
+          ),
+        }}
+        name="Home"
+        component={HomeScreen}
+      />
+
+      <Tab.Screen
+        name="Courses"
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
