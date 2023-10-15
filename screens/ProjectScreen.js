@@ -2,24 +2,96 @@ import React from "react";
 import styled from "styled-components";
 import Project from "../components/Project";
 import { PanResponder, Animated } from "react-native";
+import { connect } from "react-redux";
+
+function mapStateToProps(state) {
+  return {
+    action: state.action,
+  };
+}
+
+function getNextIndex(index) {
+  var nextIndex = index + 1;
+  if (nextIndex > projects.length - 1) {
+    return 0;
+  }
+  return nextIndex;
+}
 
 class ProjectScreen extends React.Component {
   // setting up state and animation for gestures
   state = {
     pan: new Animated.ValueXY(),
+    scale: new Animated.Value(0.9),
+    translateY: new Animated.Value(44),
+    thirdScale: new Animated.Value(0.8),
+    thirdTranslateY: new Animated.Value(-50),
+    index: 0,
+    opacity: new Animated.Value(0),
   };
 
   componentWillMount() {
     this._panResponder = PanResponder.create({
-      onMoveShouldSetPanResponder: () => true,
+      //code for enabling panResponder
+      onMoveShouldSetPanResponder: (event, gestureState) => {
+        if (gestureState.dx === 0 && gestureState.dy === 0) {
+          return false;
+        } else {
+          if (this.props.action === "openCard") {
+            return false;
+          } else {
+            return true;
+          }
+        }
+      },
+      onPanResponderGrant: () => {
+        Animated.spring(this.state.scale, {
+          toValue: 1,
+        }).start();
+        Animated.spring(this.state.translateY, {
+          toValue: 0,
+        }).start();
+        Animated.spring(this.state.thirdScale, { toValue: 0.9 }).start();
+        Animated.spring(this.state.thirdTranslateY, { toValue: 44 }).start();
+
+        Animated.timing(this.state.opacity, { toValue: 1 }).start();
+      },
+
       onPanResponderMove: Animated.event([
         null,
         { dx: this.state.pan.x, dy: this.state.pan.y },
       ]),
       onPanResponderRelease: () => {
-        Animated.spring(this.state.pan, {
-          toValue: { x: 0, y: 0 },
-        }).start();
+        const positionY = this.state.pan.y.__getValue();
+
+        Animated.timing(this.state.opacity, { toValue: 0 }).start();
+        if (positionY > 200) {
+          Animated.timing(this.state.pan, {
+            toValue: { x: 0, y: 1000 },
+          }).start(() => {
+            this.state.pan.setValue({ x: 0, y: 0 });
+            this.state.scale.setValue(0.9);
+            this.state.translateY.setValue(0.8);
+            this.state.thirdTranslateY.setValue(-50);
+            this.setState({ index: getNextIndex(this.state.index) });
+          });
+        } else {
+          Animated.spring(this.state.pan, {
+            toValue: { x: 0, y: 0 },
+          }).start();
+          Animated.spring(
+            this.state.scale,
+
+            { toValue: 0.9 }
+          ).start();
+          Animated.spring(this.state.translateY, { toValue: 44 }).start();
+
+          //when we drag the card and relaese it we reset the next card to the inital position
+          Animated.spring(this.state.thirdScale, { toValue: 0.8 }).start();
+          Animated.spring(this.state.thirdTranslateY, {
+            toValue: -50,
+          }).start();
+        }
       },
     });
   }
@@ -27,6 +99,7 @@ class ProjectScreen extends React.Component {
   render() {
     return (
       <Container>
+        <AnimateMask style={{ opacity: this.state.opacity }} />
         <Animated.View
           style={{
             transform: [
@@ -37,10 +110,57 @@ class ProjectScreen extends React.Component {
           {...this._panResponder.panHandlers}
         >
           <Project
-            title="Price Tag"
-            image={require("../assets/background5.jpg")}
-            author="Dery Franklin"
-            text="Thanks to my hardwork i am able to move forward"
+            title={projects[this.state.index].title}
+            image={projects[this.state.index].image}
+            author={projects[this.state.index].author}
+            text={projects[this.state.index].text}
+            canOpen={true}
+          />
+        </Animated.View>
+        <Animated.View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            zIndex: -1,
+            width: "100%",
+            height: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+            transform: [
+              { scale: this.state.scale },
+              { translateY: this.state.translateY },
+            ],
+          }}
+        >
+          <Project
+            title={projects[getNextIndex(this.state.index)].title}
+            image={projects[getNextIndex(this.state.index)].image}
+            author={projects[getNextIndex(this.state.index)].author}
+            text={projects[getNextIndex(this.state.index)].text}
+          />
+        </Animated.View>
+        <Animated.View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            zIndex: -3,
+            width: "100%",
+            height: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+            transform: [
+              { scale: this.state.thirdScale },
+              { translateY: this.state.thirdTranslateY },
+            ],
+          }}
+        >
+          <Project
+            title={projects[getNextIndex(this.state.index + 1)].title}
+            image={projects[getNextIndex(this.state.index + 1)].image}
+            author={projects[getNextIndex(this.state.index + 1)].author}
+            text={projects[getNextIndex(this.state.index + 1)].text}
           />
         </Animated.View>
       </Container>
@@ -48,7 +168,19 @@ class ProjectScreen extends React.Component {
   }
 }
 
-export default ProjectScreen;
+export default connect(mapStateToProps)(ProjectScreen);
+
+const Mask = styled.View`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: -3;
+`;
+
+const AnimateMask = Animated.createAnimatedComponent(Mask);
 
 const Container = styled.View`
   flex: 1;
@@ -58,3 +190,30 @@ const Container = styled.View`
 `;
 
 const Text = styled.Text``;
+
+const projects = [
+  {
+    title: "Hardwork Hrs",
+    image: require("../assets/background5.jpg"),
+    author: "dery",
+    text: "hardwork will pay off oneday, consistences and determination will show you the way my boy",
+  },
+  {
+    title: "Price Tag",
+    image: require("../assets/background6.jpg"),
+    author: "dery",
+    text: "lorem work arround jdoe lorems remses ues",
+  },
+  {
+    title: "Genuin Intentions",
+    image: require("../assets/background7.jpg"),
+    author: "dery",
+    text: "lorem work arround jdoe lorems remses ues",
+  },
+  {
+    title: "Price Tag",
+    image: require("../assets/background8.jpg"),
+    author: "dery",
+    text: "lorem work arround jdoe lorems remses ues",
+  },
+];
