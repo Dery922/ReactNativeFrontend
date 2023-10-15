@@ -14,17 +14,6 @@ function TabNavigator() {
   return (
     <Tab.Navigator>
       <Tab.Screen
-        name="Projects"
-        options={{
-          headerShown: false,
-          tabBarBadge: 3,
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings" color={color} size={34} />
-          ),
-        }}
-        component={ProjectScreen}
-      />
-      <Tab.Screen
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
@@ -44,6 +33,16 @@ function TabNavigator() {
           ),
         }}
         component={CoursesScreen}
+      />
+      <Tab.Screen
+        name="Projects"
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings" color={color} size={34} />
+          ),
+        }}
+        component={ProjectScreen}
       />
     </Tab.Navigator>
   );
